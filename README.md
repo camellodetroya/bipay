@@ -1,61 +1,123 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# API RESTful - Gestión de Usuarios y Transacciones Financieras
 
-## About Laravel
+Este proyecto implementa una API RESTful desarrollada en **Laravel 11 + PHP 8+ + MySQL**, enfocada en la gestión de usuarios y transacciones financieras, cumpliendo con múltiples requerimientos funcionales y técnicos.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✅ Requerimientos funcionales
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 👤 Gestión de Usuarios
+- [x] CRUD completo de usuarios (`nombre`, `email`, `saldo_inicial`)
+- [x] Validación de campos y reglas personalizadas
 
-## Learning Laravel
+### 💸 Gestión de Transacciones
+- [x] Registro de transferencias entre usuarios
+- [x] Validación de saldo suficiente en el emisor
+- [x] Límite diario de transferencia: **máximo 5.000 USD**
+- [ ] Prevención de transacciones duplicadas (mismo monto entre mismos usuarios y timestamp)
+- [x] Personalización de mensajes de error
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 🔐 Autenticación y Seguridad
+- [x] Laravel Sanctum como método de autenticación
+- [x] Middleware protegiendo rutas sensibles
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### 🗄️ Base de Datos
+- [x] Migraciones completas
+- [x] Valores por defecto
+- [ ] Uso de `CHECK` constraints (si el motor lo permite)
+- [x] Claves foráneas y restricciones únicas
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 📤 Exportación CSV
+- [x] Endpoint para exportar las transacciones (`api/transacciones/export`)
+- [x] Archivo CSV generado con delimitador **punto y coma (;)**
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🧠 Requerimientos técnicos adicionales
 
-### Premium Partners
+### 🚀 Optimización de Consultas
+- [x] Endpoint con reporte por usuario emisor (`api/reportes/totales`)
+- [ ] Total transferido
+- [ ] Promedio por usuario
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 🧪 Testing
+- [ ] Pruebas unitarias mínimas para validaciones personalizadas
+  - ❌ No implementadas
 
-## Contributing
+### 📚 Documentación
+- [ ] Esbozo con Swagger o Laravel Scribe
+  - ❌ No implementado
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🔍 Caso Práctico de Análisis
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+**Problema:** El sistema permite transferencias diarias por sobre el límite de 5.000 USD
 
-## Security Vulnerabilities
+### ✅ Estrategia aplicada
+- Se agregó una validación en el `TransaccionController` para calcular el total transferido por el emisor **el día actual**, y evitar superar el límite.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 🛠️ Cómo se identificaría el error
+- Revisar el controlador de transacciones
+- Validar si hay una consulta a la suma diaria de transacciones
+- Confirmar que `created_at` se compara contra la fecha del día (con Carbon)
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Instalación
+
+1. **Clonar el repositorio**
+
+```bash
+git clone https://github.com/camellodetroya/bipay.git
+cd nombre-repo
+```
+
+2. **Instalar dependencias**
+composer install
+
+3. **Copiar .env y configurar**
+cp .env.example .env
+php artisan key:generate
+
+4. **Configurar base de datos en .env**
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=NOMBRE_BDD
+DB_USERNAME=USUARIO_BDD
+DB_PASSWORD=PASSWORD_BDD
+
+5. **Correr migraciones**
+php artisan migrate
+
+## Autentificación
+POST /api/login: Inicio de sesión (devuelve token)
+POST /api/logout: Cierre de sesión
+
+Nota: Debes incluir el token en el header de tus peticiones autenticadas:
+Authorization: Bearer TU_TOKEN_AQUI
+
+## EndPoint
+
+Usuarios
+| Método | Ruta                 | Descripción               |
+| ------ | -------------------- | ------------------------- |
+| GET    | `/api/usuarios`      | Listar todos los usuarios |
+| GET    | `/api/usuarios/{id}` | Ver un usuario específico |
+| POST   | `/api/usuarios`      | Crear usuario             |
+| PUT    | `/api/usuarios/{id}` | Actualizar usuario        |
+| DELETE | `/api/usuarios/{id}` | Eliminar usuario          |
+
+Transacciones
+| Método | Ruta                        | Descripción                  |
+| ------ | --------------------------- | ---------------------------- |
+| POST   | `/api/transacciones`        | Crear nueva transacción      |
+| GET    | `/api/transacciones/export` | Exportar transacciones a CSV |
+
+
+
+
+
